@@ -22,6 +22,11 @@ class ApiController extends ActiveController
      */
     public function behaviors() 
     {
+        if (\Yii::$app->getRequest()->getMethod() === 'OPTIONS') {
+            \Yii::$app->getResponse()->getHeaders()->set('Allow', 'POST GET PUT');
+            \Yii::$app->end();
+        }
+
         return [
             'contentNegotiator' => [
                 'class' => \yii\filters\ContentNegotiator::class,
@@ -34,6 +39,7 @@ class ApiController extends ActiveController
 
             'authenticator' => [
                 'class' => HttpBasicAuth::class,
+                'except' => ['options'],
                 'auth' => function ($login, $pass)
                 {
                     if ($user = Empl::find()

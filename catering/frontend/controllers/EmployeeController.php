@@ -19,9 +19,22 @@ class EmployeeController extends ApiController
 
 	public $modelClass = Empl::class;
 
+    protected function verbs()
+    {
+        return [
+            'index' => ['GET', 'OPTIONS'],
+            'create' => ['POST', 'OPTIONS'],
+            'view' => ['GET', 'OPTIONS'],
+            'update' => ['POST', 'OPTIONS'],
+            'dismiss' => ['POST', 'OPTIONS'],
+            'restore-work' => ['POST', 'OPTIONS'],
+            ];
+    }
+
 	public function behaviors()
 	{
 		$behaviors = parent::behaviors();
+
 		$behaviors['access'] = [
 			'class' => AccessControl::class,
 			'denyCallback' => function ($rule, $action) 
@@ -30,7 +43,7 @@ class EmployeeController extends ApiController
 				},
 			'rules' => [
 				[
-					'actions' => ['view', 'index', 'create', 'update', 'dismiss', 'return'],
+					'actions' => ['view', 'index', 'create', 'update', 'dismiss', 'restore-work'],
 					'allow' => false,
 					'roles' => ['?'],
 				],
