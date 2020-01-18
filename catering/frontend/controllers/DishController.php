@@ -15,6 +15,17 @@ class DishController extends ApiController
 {
 	public $modelClass = Dish::class;
 
+    protected function verbs()
+    {
+        return [
+            'index' => ['GET', 'OPTIONS'],
+            'create' => ['POST', 'OPTIONS'],
+            'view' => ['GET', 'OPTIONS'],
+            'update' => ['POST', 'OPTIONS'],
+            'delete' => ['POST', 'OPTIONS'],
+        ];
+    }
+
 	public function behaviors()
 	{
 		$behaviors = parent::behaviors();

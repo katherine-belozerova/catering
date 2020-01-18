@@ -18,6 +18,18 @@ class CategoryController extends ApiController
 {
 	public $modelClass = Category::class;
 
+    protected function verbs()
+    {
+        return [
+            'index' => ['GET', 'OPTIONS'],
+            'create' => ['POST', 'OPTIONS'],
+            'view' => ['GET', 'OPTIONS'],
+            'update' => ['POST', 'OPTIONS'],
+            'dishes' => ['GET', 'OPTIONS'],
+            'delete-category' => ['POST', 'OPTIONS'],
+        ];
+    }
+
 	public function behaviors()
 	{
 		$behaviors = parent::behaviors();
@@ -33,6 +45,7 @@ class CategoryController extends ApiController
 					'allow' => true,
 					'roles' => ['manager'],
 				],
+
 			],
 		];
 		 	return $behaviors;
