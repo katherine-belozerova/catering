@@ -9,17 +9,12 @@ use frontend\models\Empl;
 
 class ApiController extends ActiveController
 {
-    /**
-     * @var array
-     */
+
     public $serializer = [
         'class' => 'yii\rest\Serializer',
         'collectionEnvelope' => 'items',
     ];
 
-    /**
-     * @return array
-     */
     public function behaviors() 
     {
         if (\Yii::$app->getRequest()->getMethod() === 'OPTIONS') {

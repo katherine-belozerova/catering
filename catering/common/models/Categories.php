@@ -31,8 +31,8 @@ class Categories extends ActiveRecord
         ];
     }
 
-    public function getDishes()
+    public function getDishes($category_id)
     {
-        return $this->hasMany(Dishes::classname(), ['category_id' => 'id']);
+        return $this->hasMany(Dishes::classname(), [$category_id => 'id']);
     }
 }

@@ -21,7 +21,7 @@ class CategoryController extends ApiController
     protected function verbs()
     {
         return [
-            'index' => ['GET', 'OPTIONS'],
+            'list' => ['GET', 'OPTIONS'],
             'create' => ['POST', 'OPTIONS'],
             'view' => ['GET', 'OPTIONS'],
             'update' => ['POST', 'OPTIONS'],
@@ -41,15 +41,35 @@ class CategoryController extends ApiController
 				},
 			'rules' => [
 				[
-					'actions' => ['view', 'index', 'create', 'update', 'delete-category', 'dishes'],
+					'actions' => ['view', 'index', 'create', 'update', 'delete-category', 'dishes', 'list'],
 					'allow' => true,
 					'roles' => ['manager'],
 				],
-
 			],
 		];
 		 	return $behaviors;
   	}
+
+  	public function actionList()
+    {
+        $n = Categories::find()
+            ->count();
+        $n = $n+1;
+        $k = 1;
+        $conformity = [];
+        for($i=1;$i<$n;$i++) {
+            $conformity[$k] = [
+                "category_id" => $i,
+                "" => Categories::find()->select('name')
+                    ->where(['category_id' => $i])
+                    ->one(),
+                "number" => Dishes::find()
+                ->where(['category_id' => $i])
+                ->count()];
+            $k++;
+        }
+        return $conformity;
+    }
 
   	public function actionDeleteCategory($id)
   	{
@@ -61,14 +81,11 @@ class CategoryController extends ApiController
 
   	public function actionDishes($id)
   	{
-  		$model = $this->findModel($id);
   		$query = Dishes::find()
   			->where(['category_id' => $id])
   			->orderBy(['name' => SORT_ASC])
   			->all();
   		return $query;
-        
-
   	}
 
   	protected function findModel($id)
