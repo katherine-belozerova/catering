@@ -19,8 +19,8 @@ class Categories extends ActiveRecord
     {
         return [
             [['name'], 'required', 'message' => 'Обязательное поле'],
-
             [['name'], 'string', 'max' => 128],
+            [['name'], 'unique', 'targetClass' => 'common\models\Categories', 'message' => 'Данная категория уже создана'],
         ];
     }
 

@@ -22,11 +22,4 @@ class SiteController extends Controller
     {
     	return $this->render('index');
     }
-
-    public function actionLogin()
-    {
-        $model = new LoginForm();
-        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
-        return $model->login();
-    }
 }

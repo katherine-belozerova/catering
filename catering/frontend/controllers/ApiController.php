@@ -9,6 +9,9 @@ use frontend\models\Empl;
 
 class ApiController extends ActiveController
 {
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_SUPER_ADMIN = 5;
 
     public $serializer = [
         'class' => 'yii\rest\Serializer',
@@ -38,7 +41,11 @@ class ApiController extends ActiveController
                 'auth' => function ($login, $pass)
                 {
                     if ($user = Empl::find()
-                        ->where(['login' => $login])->one() 
+                            ->where(['login' => $login,
+                                'status' => self::STATUS_ACTIVE])
+                            ->orWhere(['login' => $login,
+                                'status' => self::STATUS_SUPER_ADMIN])
+                            ->one()
                         and !empty($pass) 
                         and $user->validatePassword($pass)) {
                         return $user;

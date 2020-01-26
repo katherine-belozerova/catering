@@ -54,21 +54,20 @@ class CategoryController extends ApiController
     {
         $n = Categories::find()
             ->count();
-        $n = $n+1;
         $k = 1;
-        $conformity = [];
-        for($i=1;$i<$n;$i++) {
-            $conformity[$k] = [
-                "category_id" => $i,
-                "" => Categories::find()->select('name')
-                    ->where(['category_id' => $i])
-                    ->one(),
+        $names = Categories::find()->select('name')->all();
+        $category_ids = Categories::find()->select('category_id')->all();
+        for($i=0;$i<$n;$i++) {
+            $categories[$k] = [
+                "category_id" => $category_ids[$i],
+                "name" => $names[$i],
                 "number" => Dishes::find()
-                ->where(['category_id' => $i])
-                ->count()];
+                    ->where(['category_id' => $category_ids[$i]])
+                    ->count()
+            ];
             $k++;
         }
-        return $conformity;
+        return $categories;
     }
 
   	public function actionDeleteCategory($id)
@@ -76,7 +75,7 @@ class CategoryController extends ApiController
 		$model = $this->findModel($id);
 		Dishes::deleteAll('category_id = :id', [':id' => $id]);
 		Categories::deleteAll('category_id = :id', [':id' => $id]);
-	    return $this->redirect(['index']);
+	    return $this->redirect(['list']);
   	}
 
   	public function actionDishes($id)
