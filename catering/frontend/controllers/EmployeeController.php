@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use Yii;
-use common\models\LoginForm;
 use frontend\models\Empl;
 use common\models\Employee;
 use yii\filters\AccessControl;
@@ -41,9 +40,9 @@ class EmployeeController extends ApiController
 
 		$behaviors['access'] = [
 			'class' => AccessControl::className(),
-			'denyCallback' => function ($rule, $action) 
-				{ 
-					throw new \Exception('У Вас нет прав для доступа к данной странице'); 
+			'denyCallback' => function ($rule, $action)
+				{
+					throw new \Exception('У Вас нет прав для доступа к данной странице');
 				},
 			'rules' => [
 				[
@@ -131,6 +130,7 @@ class EmployeeController extends ApiController
         $telephone = Yii::$app->getRequest()->getBodyParam('telephone');
         $pass = Yii::$app->getRequest()->getBodyParam('pass');
 
+
             if (($model->login !== $login)
                 && (Empl::find()
                     ->where(['login' => $login])
@@ -140,6 +140,20 @@ class EmployeeController extends ApiController
                     ->execute();
             }
             if ($model->role !== $role) {
+                $auth = Yii::$app->authManager;
+                $admin = $auth->getRole('admin');
+                $director = $auth->getRole('director');
+                $manager = $auth->getRole('manager');
+                if ($role == 'Администратор') {
+                    $auth->revokeAll($model->id);
+                    $auth->assign($admin, $model->id);
+                } elseif ($role == 'Директор') {
+                    $auth->revokeAll($model->id);
+                    $auth->assign($director, $model->id);
+                } elseif ($role == 'Менеджер') {
+                    $auth->revokeAll($model->id);
+                    $auth->assign($manager, $model->id);
+                }
                 Yii::$app->db->createCommand()
                     ->update('employee', ['role' => $role], 'id='.$model->id)
                     ->execute();

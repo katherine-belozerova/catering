@@ -52,7 +52,7 @@ class Employee extends ActiveRecord implements IdentityInterface
             'passport_issued_by', 'date_of_issue_of_passport', 'email', 'telephone', 'pass', 'login'], 'required', 'message' => 'Обязательное поле'],
             [['passport_series', 'passport_number'], 'integer'],
             [['surname', 'name', 'passport_series', 'passport_number', 'birth_date', 'date_of_employment', 'passport_issued_by', 
-            'date_of_issue_of_passport', 'email', 'telephone'], 'trim'],
+            'date_of_issue_of_passport', 'email'], 'trim'],
             [['role', 'login', 'pass'], 'string', 'max' => 16],
             [['surname', 'name', 'fathername'], 'string', 'max' => 64],
             [['birth_date', 'date_of_employment', 'date_of_issue_of_passport'], 'date', 'format' => 'dd.mm.yyyy', 'message' => 'Неверный формат даты (дд.мм.гггг)'],
