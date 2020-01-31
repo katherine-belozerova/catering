@@ -35,9 +35,9 @@ class CategoryController extends ApiController
 		$behaviors = parent::behaviors();
 		$behaviors['access'] = [
 			'class' => AccessControl::class,
-			'denyCallback' => function ($rule, $action) 
-				{ 
-					throw new \Exception('У Вас нет прав для доступа к данной странице'); 
+			'denyCallback' => function ($rule, $action)
+				{
+					throw new \Exception('У Вас нет прав для доступа к данной странице');
 				},
 			'rules' => [
 				[

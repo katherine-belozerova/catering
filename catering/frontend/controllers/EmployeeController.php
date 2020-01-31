@@ -31,45 +31,46 @@ class EmployeeController extends ApiController
             'staff' => ['GET', 'OPTIONS'],
             'dismissed-staff' => ['GET', 'OPTIONS'],
             'sort-by' => ['GET', 'OPTIONS'],
+            'delete' => ['POST', 'OPTIONS'],
             ];
     }
 
 	public function behaviors()
-	{
-		$behaviors = parent::behaviors();
+{
+    $behaviors = parent::behaviors();
 
-		$behaviors['access'] = [
-			'class' => AccessControl::className(),
-			'denyCallback' => function ($rule, $action)
-				{
-					throw new \Exception('У Вас нет прав для доступа к данной странице');
-				},
-			'rules' => [
-				[
-					'actions' => ['view', 'create', 'update', 'dismiss', 'restore-work',
-                        'staff', 'dismissed-staff', 'edit'],
-					'allow' => false,
-					'roles' => ['?'],
-				],
-				[
-					'actions' => ['view', 'staff', 'dismissed-staff', 'sort-by'],
-					'allow' => true,
-					'roles' => ['viewEmployee'],
-				],
-				[
-                    'actions' => ['create', 'dismiss', 'restore-work', 'edit'],
-                    'allow' => true,
-                    'roles' => ['createEmployee'],
-                ],
-                [
-                    'actions' => ['dismiss', 'restore-work', 'edit'],
-                    'allow' => true,
-                    'roles' => ['updateEmployee'],
-                ],
-			],
-		];
-		 	return $behaviors;
-  	}
+    $behaviors['access'] = [
+        'class' => AccessControl::className(),
+        'denyCallback' => function ($rule, $action)
+        {
+            throw new \Exception('У Вас нет прав для доступа к данной странице');
+        },
+        'rules' => [
+            [
+                'actions' => ['view', 'create', 'update', 'dismiss', 'restore-work',
+                    'staff', 'dismissed-staff', 'edit', 'delete'],
+                'allow' => false,
+                'roles' => ['?'],
+            ],
+            [
+                'actions' => ['view', 'staff', 'dismissed-staff', 'sort-by'],
+                'allow' => true,
+                'roles' => ['viewEmployee'],
+            ],
+            [
+                'actions' => ['create', 'dismiss', 'restore-work', 'edit'],
+                'allow' => true,
+                'roles' => ['createEmployee'],
+            ],
+            [
+                'actions' => ['dismiss', 'restore-work', 'edit', 'delete'],
+                'allow' => true,
+                'roles' => ['updateEmployee'],
+            ],
+        ],
+    ];
+    return $behaviors;
+}
 
   	public function actionSortBy($sort)
     {

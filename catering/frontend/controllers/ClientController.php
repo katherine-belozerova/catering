@@ -4,6 +4,7 @@
 namespace frontend\controllers;
 
 use common\models\Client;
+use common\models\Organization;
 use yii\filters\AccessControl;
 
 class ClientController extends ApiController
@@ -53,10 +54,34 @@ class ClientController extends ApiController
 
     public function actionList()
     {
-        $client = Client::find()
-            ->orderBy(['id' => SORT_DESC])
-            ->all();
-        return $client;
+        $n = Client::find()
+            ->count();
+        $k = 1;
+        $names = Client::find()->select('name')->all();
+        $surnames = Client::find()->select('surname')->all();
+        $fathernames = Client::find()->select('fathername')->all();
+        $types = Client::find()->select('type')->all();
+        $birth_dates = Client::find()->select('birth_date')->all();
+        $telephones = Client::find()->select('telephone')->all();
+        $emails = Client::find()->select('email')->all();
+        $organization_ids = Client::find()->select('organization_id')->all();
+        for($i=0;$i<$n;$i++) {
+            $clients[$k] = [
+                "organization_id" => $organization_ids[$i],
+                "organization" => Organization::find()
+                    ->select('name')
+                    ->where(['organization_id' => $organization_ids[$i]]),
+                "surname" => $surnames[$i],
+                "name" => $names[$i],
+                "fathername" => $fathernames[$i],
+                "type" => $types[$i],
+                "birth_date" => $birth_dates[$i],
+                "telephone" => $telephones[$i],
+                "email" => $emails[$i],
+            ];
+            $k++;
+        }
+        return $clients;
     }
 
     public function actionEdit($id)
@@ -72,27 +97,44 @@ class ClientController extends ApiController
         $email = Yii::$app->getRequest()->getBodyParam('email');
         $organization_id = Yii::$app->getRequest()->getBodyParam('organization_id');
 
-        if (($model->surname !== $surname)
-            && (Client::find()
-                    ->where(['inn' => $inn])
-                    ->count() == 0)) {
+        if ($model->surname !== $surname) {
             Yii::$app->db->createCommand()
-                ->update('organization', ['inn' => $inn], 'id=' . $model->id)
+                ->update('client', ['surname' => $surname], 'id=' . $model->id)
                 ->execute();
-        } elseif (($model->inn !== $inn)
-            && (Client::find()
-                    ->where(['inn' => $inn])
-                    ->count() > 0)) {
-            return "Данный ИНН уже используется";
         }
         if ($model->name !== $name) {
             Yii::$app->db->createCommand()
-                ->update('organization', ['name' => $name], 'id=' . $model->id)
+                ->update('client', ['name' => $name], 'id=' . $model->id)
                 ->execute();
         }
-        if ($model->address !== $address) {
+        if ($model->fathername !== $fathername) {
             Yii::$app->db->createCommand()
-                ->update('organization', ['address' => $address], 'id=' . $model->id)
+                ->update('client', ['fathername' => $fathername], 'id=' . $model->id)
+                ->execute();
+        }
+        if ($model->type !== $type) {
+            Yii::$app->db->createCommand()
+                ->update('client', ['type' => $type], 'id=' . $model->id)
+                ->execute();
+        }
+        if ($model->birth_date !== $birth_date) {
+            Yii::$app->db->createCommand()
+                ->update('client', ['birth_date' => $birth_date], 'id=' . $model->id)
+                ->execute();
+        }
+        if ($model->telephone !== $telephone) {
+            Yii::$app->db->createCommand()
+                ->update('client', ['telephone' => $telephone], 'id=' . $model->id)
+                ->execute();
+        }
+        if ($model->email !== $email) {
+            Yii::$app->db->createCommand()
+                ->update('client', ['email' => $email], 'id=' . $model->id)
+                ->execute();
+        }
+        if ($model->organization_id !== $organization_id) {
+            Yii::$app->db->createCommand()
+                ->update('client', ['organization_id' => $organization_id], 'id=' . $model->id)
                 ->execute();
         }
     }
