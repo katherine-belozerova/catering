@@ -44,11 +44,6 @@ class Login extends Model
         }
     }
 
-    public static function findByUsername($login)
-    {
-        return Employee::find()->where(['login' => $login])->one();
-    }
-
     public function validatePassword($attribute, $params)
     {
         $employee = Employee::findByUsername($this->login);

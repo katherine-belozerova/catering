@@ -141,7 +141,10 @@ class Employee extends ActiveRecord implements IdentityInterface
 
     public static function findByUsername($login)
     {
-      return self::find()->where(['login' => $login])->one();
+      return self::find()
+          ->where(['login' => $login, 'status' => self::STATUS_ACTIVE])
+          ->orWhere(['login' => $login, 'status' => self::STATUS_SUPER_ADMIN])
+          ->one();
     }
 
     public function validatePassword($pass)
