@@ -92,6 +92,7 @@ class Employee extends ActiveRecord implements IdentityInterface
     {
         if(parent::beforeSave($insert)) {
             $this->pass = Yii::$app->security->generatePasswordHash($this->pass);
+            $this->token = Yii::$app->security->generateRandomString();
             return true;
         } return false;
     }
@@ -125,7 +126,7 @@ class Employee extends ActiveRecord implements IdentityInterface
 
     public static function findIdentityByAccessToken($token, $type = null)
     {
-
+        return static::findOne(['token' => $token]);
     }
 
     public function getAuthKey()

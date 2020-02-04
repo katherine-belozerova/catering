@@ -3,9 +3,9 @@
 namespace frontend\controllers;
 
 use yii\rest\ActiveController;
-use yii\filters\auth\HttpBasicAuth;
+use yii\filters\auth\HttpBearerAuth;
 use yii\filters\AccessControl;
-use frontend\models\Empl;
+use frontend\models\Employee;
 
 class ApiController extends ActiveController
 {
@@ -36,21 +36,7 @@ class ApiController extends ActiveController
             ],
 
             'authenticator' => [
-                'class' => HttpBasicAuth::class,
-                'except' => ['options'],
-                'auth' => function ($login, $pass)
-                {
-                    if ($user = Empl::find()
-                            ->where(['login' => $login,
-                                'status' => self::STATUS_ACTIVE])
-                            ->orWhere(['login' => $login,
-                                'status' => self::STATUS_SUPER_ADMIN])
-                            ->one()
-                        and !empty($pass) 
-                        and $user->validatePassword($pass)) {
-                        return $user;
-                    } return null;
-                },
+                'class' => HttpBearerAuth::className(),
             ],
         ];
     }

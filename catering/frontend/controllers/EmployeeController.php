@@ -48,12 +48,12 @@ class EmployeeController extends ApiController
         'rules' => [
             [
                 'actions' => ['view', 'create', 'update', 'dismiss', 'restore-work',
-                    'staff', 'dismissed-staff', 'edit', 'delete'],
+                    'staff', 'dismissed-staff', 'edit', 'delete', 'search'],
                 'allow' => false,
                 'roles' => ['?'],
             ],
             [
-                'actions' => ['view', 'staff', 'dismissed-staff', 'sort-by'],
+                'actions' => ['view', 'staff', 'dismissed-staff', 'sort-by', 'search'],
                 'allow' => true,
                 'roles' => ['viewEmployee'],
             ],
@@ -78,6 +78,16 @@ class EmployeeController extends ApiController
             ->orderBy([$sort => SORT_ASC])
             ->all();
         return $sorting;
+    }
+
+    public function actionSearch($search)
+    {
+        $searching = Empl::find()
+            ->where(['like', 'surname', $search])
+            ->orWhere(['like', 'name', $search])
+            ->orWhere(['like', 'fathername', $search])
+            ->all();
+        return $searching;
     }
 
     public function actionStaff()
