@@ -73,6 +73,26 @@ return [
                     ],
                     'except' => ['index', 'create', 'view', 'update', 'delete'],
                 ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'organization',
+                    'pluralize' => false,
+                    'extraPatterns' => [
+                        'GET foo' => 'foo',
+                        'OPTIONS foo' => 'options',
+                    ],
+                    'except' => ['index', 'create', 'view', 'update', 'delete'],
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'client',
+                    'pluralize' => false,
+                    'extraPatterns' => [
+                        'GET foo' => 'foo',
+                        'OPTIONS foo' => 'options',
+                    ],
+                    'except' => ['index', 'create', 'view', 'update', 'delete'],
+                ],
             ],
         ],
     ],

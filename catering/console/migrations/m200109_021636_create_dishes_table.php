@@ -19,7 +19,6 @@ class m200109_021636_create_dishes_table extends Migration
             'weight' => $this->integer(3)->notNull(),
             'cost' => $this->integer(4)->notNull(),
             'notes' => $this->string(128),
-
         ]);
     }
 

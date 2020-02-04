@@ -21,7 +21,7 @@ class CategoryController extends ApiController
     protected function verbs()
     {
         return [
-            'index' => ['GET', 'OPTIONS'],
+            'list' => ['GET', 'OPTIONS'],
             'create' => ['POST', 'OPTIONS'],
             'view' => ['GET', 'OPTIONS'],
             'update' => ['POST', 'OPTIONS'],
@@ -35,40 +35,56 @@ class CategoryController extends ApiController
 		$behaviors = parent::behaviors();
 		$behaviors['access'] = [
 			'class' => AccessControl::class,
-			'denyCallback' => function ($rule, $action) 
-				{ 
-					throw new \Exception('У Вас нет прав для доступа к данной странице'); 
+			'denyCallback' => function ($rule, $action)
+				{
+					throw new \Exception('У Вас нет прав для доступа к данной странице');
 				},
 			'rules' => [
 				[
-					'actions' => ['view', 'index', 'create', 'update', 'delete-category', 'dishes'],
+					'actions' => ['view', 'index', 'create', 'update', 'delete-category', 'dishes', 'list'],
 					'allow' => true,
 					'roles' => ['manager'],
 				],
-
 			],
 		];
 		 	return $behaviors;
   	}
+
+  	public function actionList()
+    {
+        $n = Categories::find()
+            ->count();
+        $k = 1;
+        $names = Categories::find()->select('name')->all();
+        $category_ids = Categories::find()->select('category_id')->all();
+        for($i=0;$i<$n;$i++) {
+            $categories[$k] = [
+                "category_id" => $category_ids[$i],
+                "name" => $names[$i],
+                "number" => Dishes::find()
+                    ->where(['category_id' => $category_ids[$i]])
+                    ->count()
+            ];
+            $k++;
+        }
+        return $categories;
+    }
 
   	public function actionDeleteCategory($id)
   	{
 		$model = $this->findModel($id);
 		Dishes::deleteAll('category_id = :id', [':id' => $id]);
 		Categories::deleteAll('category_id = :id', [':id' => $id]);
-	    return $this->redirect(['index']);
+	    return $this->redirect(['list']);
   	}
 
   	public function actionDishes($id)
   	{
-  		$model = $this->findModel($id);
   		$query = Dishes::find()
   			->where(['category_id' => $id])
   			->orderBy(['name' => SORT_ASC])
   			->all();
   		return $query;
-        
-
   	}
 
   	protected function findModel($id)

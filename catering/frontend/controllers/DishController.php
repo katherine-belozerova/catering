@@ -18,7 +18,6 @@ class DishController extends ApiController
     protected function verbs()
     {
         return [
-            'index' => ['GET', 'OPTIONS'],
             'create' => ['POST', 'OPTIONS'],
             'view' => ['GET', 'OPTIONS'],
             'update' => ['POST', 'OPTIONS'],
@@ -37,7 +36,7 @@ class DishController extends ApiController
 				},
 			'rules' => [
 				[
-					'actions' => ['view', 'index', 'create', 'update', 'delete'],
+					'actions' => ['view', 'create', 'update', 'delete'],
 					'allow' => true,
 					'roles' => ['manager'],
 				],
