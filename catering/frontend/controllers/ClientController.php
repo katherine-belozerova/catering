@@ -57,7 +57,6 @@ class ClientController extends ApiController
                         'list',
                         'delete',
                         'update',
-                        'test'
                     ],
                     'allow' => true,
                     'roles' => ['manager'],
@@ -87,10 +86,5 @@ class ClientController extends ApiController
     {
         $model = new Client();
         return $model->search($searching);
-    }
-
-    public function actionTest()
-    {
-        return date('d.m.yy');
     }
 }
