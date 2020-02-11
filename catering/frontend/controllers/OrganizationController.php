@@ -16,7 +16,7 @@ class OrganizationController extends ApiController
             'create' => ['POST', 'OPTIONS'],
             'list' => ['GET', 'OPTIONS'],
             'sort-by' => ['GET', 'OPTIONS'],
-            'edit' => ['POST', 'OPTIONS'],
+            'update' => ['POST', 'OPTIONS'],
             'delete' => ['POST', 'OPTIONS'],
         ];
     }
@@ -34,12 +34,27 @@ class OrganizationController extends ApiController
             'rules' => [
 
                 [
-                    'actions' => ['sort-by', 'create', 'edit', 'list', 'delete', 'update', 'view', 'index'],
+                    'actions' =>
+                    [
+                        'sort-by',
+                        'create',
+                        'list',
+                        'delete',
+                        'update',
+                        'view',
+                        'index'
+                    ],
                     'allow' => false,
                     'roles' => ['?'],
                 ],
                 [
-                    'actions' => ['sort-by', 'create', 'edit', 'list', 'delete'],
+                    'actions' =>
+                    [
+                        'sort-by',
+                        'update',
+                        'list',
+                        'delete'
+                    ],
                     'allow' => true,
                     'roles' => ['manager'],
                 ],
@@ -48,52 +63,24 @@ class OrganizationController extends ApiController
         return $behaviors;
     }
 
-    public function actionSortBy($sort)
+    public function actionSortBy($field)
     {
-        $sorting = Organization::find()
-            ->orderBy([$sort => SORT_ASC])
-            ->all();
-        return $sorting;
+        $type = SORT_ASC;
+        $model = new Organization();
+        return $model->sorting($field, $type);
     }
 
     public function actionList()
     {
-        $org = Organization::find()
-            ->orderBy(['organization_id' => SORT_DESC])
-            ->all();
-        return $org;
+        $type = SORT_DESC;
+        $field = 'organization_id';
+        $model = new Organization();
+        return $model->sorting($field, $type);
     }
 
-    public function actionEdit($id)
+    public function actionSearch($searching)
     {
-        $model = $this->findModel($id);
-
-        $name = Yii::$app->getRequest()->getBodyParam('name');
-        $address = Yii::$app->getRequest()->getBodyParam('address');
-        $inn = Yii::$app->getRequest()->getBodyParam('inn');
-
-        if (($model->inn !== $inn)
-            && (Organization::find()
-                    ->where(['inn' => $inn])
-                    ->count() == 0)) {
-            Yii::$app->db->createCommand()
-                ->update('organization', ['inn' => $inn], 'id=' . $model->id)
-                ->execute();
-        } elseif (($model->inn !== $inn)
-            && (Organization::find()
-                    ->where(['inn' => $inn])
-                    ->count() > 0)) {
-            return "Данный ИНН уже используется";
-        }
-        if ($model->name !== $name) {
-            Yii::$app->db->createCommand()
-                ->update('organization', ['name' => $name], 'id=' . $model->id)
-                ->execute();
-        }
-        if ($model->address !== $address) {
-            Yii::$app->db->createCommand()
-                ->update('organization', ['address' => $address], 'id=' . $model->id)
-                ->execute();
-        }
+        $model = new Organization();
+        return $model->search($searching);
     }
 }

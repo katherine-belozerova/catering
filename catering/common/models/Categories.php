@@ -31,8 +31,21 @@ class Categories extends ActiveRecord
         ];
     }
 
-    public function getDishes($category_id)
+    public function list_of_categories()
     {
-        return $this->hasMany(Dishes::classname(), [$category_id => 'id']);
+        $data = Categories::find()->asArray()->all();
+        $data = array_map(function($value) {
+            $value['number'] = Dishes::find()
+                ->where(['category_id' => $value['category_id']])
+                ->count();
+            return $value;
+        }, $data);
+        return $data;
+    }
+
+    public function delete_all($id)
+    {
+        Dishes::deleteAll('category_id = :id', [':id' => $id]);
+        Categories::deleteAll('category_id = :id', [':id' => $id]);
     }
 }

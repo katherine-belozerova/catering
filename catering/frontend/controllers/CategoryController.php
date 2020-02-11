@@ -3,11 +3,8 @@
 namespace frontend\controllers;
 
 use Yii;
-use frontend\models\Category;
-use frontend\models\Dish;
 use common\models\Dishes;
 use common\models\Categories;
-use frontend\models\Empl;
 use yii\filters\AccessControl;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
@@ -16,7 +13,7 @@ use yii\filters\auth\HttpBasicAuth;
 
 class CategoryController extends ApiController
 {
-	public $modelClass = Category::class;
+	public $modelClass = Categories::class;
 
     protected function verbs()
     {
@@ -41,7 +38,7 @@ class CategoryController extends ApiController
 				},
 			'rules' => [
 				[
-					'actions' => ['view', 'index', 'create', 'update', 'delete-category', 'dishes', 'list'],
+					'actions' => ['view', 'index', 'create', 'update', 'delete-category', 'dishes', 'list', 'normal-list'],
 					'allow' => true,
 					'roles' => ['manager'],
 				],
@@ -50,48 +47,24 @@ class CategoryController extends ApiController
 		 	return $behaviors;
   	}
 
-  	public function actionList()
+    public function actionList()
     {
-        $n = Categories::find()
-            ->count();
-        $k = 1;
-        $names = Categories::find()->select('name')->all();
-        $category_ids = Categories::find()->select('category_id')->all();
-        for($i=0;$i<$n;$i++) {
-            $categories[$k] = [
-                "category_id" => $category_ids[$i],
-                "name" => $names[$i],
-                "number" => Dishes::find()
-                    ->where(['category_id' => $category_ids[$i]])
-                    ->count()
-            ];
-            $k++;
-        }
-        return $categories;
+        $model = new Categories();
+        return $model->list_of_categories();
     }
 
   	public function actionDeleteCategory($id)
   	{
-		$model = $this->findModel($id);
-		Dishes::deleteAll('category_id = :id', [':id' => $id]);
-		Categories::deleteAll('category_id = :id', [':id' => $id]);
+		$model = new Categories();
+		$model->delete_all($id);
 	    return $this->redirect(['list']);
   	}
 
   	public function actionDishes($id)
   	{
-  		$query = Dishes::find()
-  			->where(['category_id' => $id])
-  			->orderBy(['name' => SORT_ASC])
-  			->all();
-  		return $query;
+        return Dishes::find()
+            ->where(['category_id' => $id])
+            ->orderBy(['name' => SORT_ASC])
+            ->all();
   	}
-
-  	protected function findModel($id)
-    {
-        if (!empty(($model = Empl::findOne($id)))) {
-            return $model;
-        } return false;
-    }
-
 }

@@ -3,8 +3,7 @@
 namespace frontend\controllers;
 
 use Yii;
-use frontend\models\Dish;
-use frontend\models\Empl;
+use common\models\Dishes;
 use yii\filters\AccessControl;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
@@ -13,7 +12,7 @@ use yii\filters\auth\HttpBasicAuth;
 
 class DishController extends ApiController
 {
-	public $modelClass = Dish::class;
+	public $modelClass = Dishes::class;
 
     protected function verbs()
     {

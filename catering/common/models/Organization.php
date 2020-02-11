@@ -3,6 +3,7 @@
 namespace common\models;
 
 use yii\db\ActiveRecord;
+use Yii;
 
 
 class Organization extends ActiveRecord
@@ -18,8 +19,16 @@ class Organization extends ActiveRecord
         return [
             [['name', 'address', 'inn'], 'required', 'message' => 'Обязательное поле'],
             [['name', 'address'], 'string', 'max' => 128],
-            [['inn'], 'integer', 'max' => 12],
-            [['inn'], 'unique', 'targetClass' => 'common\models\Organization', 'message' => 'Данный ИНН уже зарегистрирован'],
+            [['inn'], 'string', 'max' => 12],
+            [['inn'],
+                'unique',
+                'when' => function ($model)
+                {
+                    return $model->inn !== Yii::$app->getRequest()->getBodyParam('inn')
+                        || (!empty($model->inn));
+                },
+                'message' => 'Организация с таким ИНН уже зарегистрирована',
+            ],
         ];
     }
 
@@ -30,5 +39,19 @@ class Organization extends ActiveRecord
             'address' => 'Адрес',
             'inn' => 'ИНН',
         ];
+    }
+
+    public function sorting($field, $type)
+    {
+        return Organization::find()
+            ->orderBy([$field => $type])
+            ->all();
+    }
+
+    public function search($searching)
+    {
+        return self::find()
+            ->where(['like', 'name', $searching])
+            ->all();
     }
 }
