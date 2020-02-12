@@ -19,8 +19,16 @@ class Dishes extends ActiveRecord
     {
         return [
             [['name', 'weight', 'cost', 'category_id'], 'required', 'message' => 'Обязательное поле'],
-
             [['name', 'notes'], 'string', 'max' => 128],
+            [['name'],
+                'unique',
+                'when' => function ($model)
+                {
+                    return $model->name !== Yii::$app->getRequest()->getBodyParam('name')
+                        || (!empty($model->name));
+                },
+                'message' => 'Данное блюдо уже создано',
+            ],
         ];
     }
 
@@ -32,10 +40,5 @@ class Dishes extends ActiveRecord
             'cost' => 'Цена порции',
             'notes' => 'Примечания',
         ];
-    }
-
-    public function getCategories()
-    {
-        return $this->hasOne(Categories::classname(), ['id' => 'category_id']);
     }
 }
