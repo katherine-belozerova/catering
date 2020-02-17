@@ -106,6 +106,16 @@ class Employee extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->pass = Yii::$app->security->generatePasswordHash($this->pass);
+            return parent::beforeSave($insert);
+        } else {
+            return false;
+        }
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -121,7 +131,6 @@ class Employee extends ActiveRecord implements IdentityInterface
         } elseif ($this->role == 'Менеджер') {
             $auth->assign($manager, $this->id); 
         }
-        $this->pass = Yii::$app->security->generatePasswordHash($this->pass);
     }
 
     public function search($searching, $status)
