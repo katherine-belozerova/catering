@@ -76,6 +76,7 @@ class EmployeeController extends ApiController
                         'restore-work',
                         'update',
                         'create',
+                        'view',
                     ],
                     'allow' => true,
                     'roles' => ['admin'],
